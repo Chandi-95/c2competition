@@ -19,7 +19,7 @@ class Agent:
         self.listener = listener
         self.remoteip = remoteip
         self.hostname = hostname
-        self.Type = Type
+        self.type = Type
         self.key = key
         # Sleep time of 3 secs to determine whether agent is dead or not
         self.sleept = 3

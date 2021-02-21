@@ -53,7 +53,7 @@ class Listener:
                 f.write(key)
         else:
             with open(self.keyPath, "rt") as f:
-                self.key = f.read();
+                self.key = f.read()
         
         """There are 5 routes for the flask application:
               - /reg: handles new agents (POST requests)
@@ -84,7 +84,7 @@ class Listener:
             else:
                 return('', 204)
         
-        @self.app.route("results/<name>", methods=['POST'])
+        @self.app.route("/results/<name>", methods=['POST'])
         def recieveResults(name):
             # Takes results and sends them to displayResults(), then sends empty response
             result = flask.request.form.get("result")
@@ -108,28 +108,28 @@ class Listener:
         
             return (oneliner, 200)
 
-        # Starting and stopping through creating Process objects
-        def run(self):
-            self.app.logger.disabled = True
-            self.app.run(port=self.port, host=self.ipaddress)
+    # Starting and stopping through creating Process objects
+    def run(self):
+        self.app.logger.disabled = True
+        self.app.run(port=self.port, host=self.ipaddress)
 
-        def setFlag(self):
-            self.flag = 1
+    def setFlag(self):
+        self.flag = 1
         
-        def start(self):
-            self.server = Process(target=self.run)
-            cli = sys.modules['flask.cli']
-            cli.show_server_banner = lambda *x: None
-            self.daemon = threading.Thread(name=self.name, target=self.server.start, args=())
-            self.daemon.daemon = True
-            self.daemon.start()
+    def start(self):
+        self.server = Process(target=self.run)
+        cli = sys.modules['flask.cli']
+        cli.show_server_banner = lambda *x: None
+        self.daemon = threading.Thread(name=self.name, target=self.server.start, args=())
+        self.daemon.daemon = True
+        self.daemon.start()
 
-            self.isRunning = True
+        self.isRunning = True
         
-        def stop(self):
-            self.server.terminate()
-            self.server = None
-            self.daemon = None
-            self.isRunning = False
+    def stop(self):
+        self.server.terminate()
+        self.server = None
+        self.daemon = None
+        self.isRunning = False
 
 
