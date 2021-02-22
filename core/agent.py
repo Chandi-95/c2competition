@@ -18,7 +18,7 @@ class Agent:
         self.hostname  = hostname
         self.Type      = Type
         self.key       = key
-        self.sleept    = 3
+        self.sleept    = 10
         self.Path      = "data/listeners/{}/agents/{}/".format(self.listener, self.name)
         self.tasksPath = "{}tasks".format(self.Path, self.name)
 

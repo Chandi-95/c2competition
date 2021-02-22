@@ -29,7 +29,7 @@ class Listener:
         self.port = port
         self.ipaddress = ipaddress
         # directories to store files/data
-        self.Path = "data/listeners/{}".format(self.name)
+        self.Path = "data/listeners/{}/".format(self.name)
         self.keyPath = "{}key".format(self.Path)
         self.filePath = "{}files/".format(self.Path)
         self.agentsPath = "{}agents/".format(self.Path)

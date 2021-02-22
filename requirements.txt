@@ -1,4 +1,4 @@
 netifaces
 flask
-pyreadline
+readline
 pycryptodome
