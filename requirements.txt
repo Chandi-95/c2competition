@@ -1,4 +1,0 @@
-netifaces
-flask
-readline
-pycryptodome
