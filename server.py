@@ -5,7 +5,7 @@ import socket
 import threading 
 
 # Port to listen for connections on 
-port = 1337
+port = 12102
  
 def main():    
     # Creating server socket 
@@ -19,27 +19,26 @@ def main():
     print("Connected from: ", client_addr)
 
     # Sending string to the client
-    command = input("> ")
-    padCommand = (command.ljust(1024, "\0")).encode("utf-8")
-    client_sock.send(padCommand)
+    while True:
+        command = input("> ")
+        padCommand = (command.ljust(1024, "\0")).encode("utf-8")
+        client_sock.send(padCommand)
 
-    # Receiving output from the client
-    if(command != "quit"):
-        # Recieve one byte at a time, end character is 0xFF
-        output = bytes.decode(client_sock.recv(1))
-        while True: 
-            data = client_sock.recv(1)
-            if(data == b"\xff"):
-                break
-            else: 
+        # Receiving output from the client
+        if(command != "quit"):
+            # Recieve one byte at a time, end character is 0xFF
+            output = bytes.decode(client_sock.recv(1))
+            while True: 
+                data = client_sock.recv(1)
+                if(data == b"\xff"):
+                    break
                 output += bytes.decode(data)
+            
+            print(output)
         
-        print(output)
-    
     # Close client socket connection when done
     client_sock.close()
-
-    # server_sock.close()
+    server_sock.close()
 
 if __name__ == '__main__':
     main()
