@@ -45,8 +45,6 @@ int main() {
 		return 1;
 	}
 	freeaddrinfo(result);
-	
-	//Infinite loop for recieving and sending back information 
 
 	//Infinite loop that serves as the heartbeat
 	while(true) {
@@ -58,12 +56,17 @@ int main() {
 		ZeroMemory(recvmessage, DEFAULT_BUFFLEN);
 		recv(ConnectSocket, recvmessage, DEFAULT_BUFFLEN, 0);
 
-		if (strcmp(recvmessage, "quit") == 0) {
+		if (strcmp(recvmessage, "close") == 0) { //quit
 			send(ConnectSocket, "\xff", DEFAULT_BUFFLEN, 0);
 			break;
 		}
-		else {
+		else if (strcmp(recvmessage, "no tasks") != 0) { //is an acutal command to run 
 			printf("Recieved message %s\n", recvmessage);
+			send(ConnectSocket, "Hello Server!", strlen("Hello Server!"), 0);
+			send(ConnectSocket, "\xff", strlen("\xff"), 0);
+		}
+		else {
+			printf("No tasks to run\n");
 			//send(ConnectSocket, "Hello Server!", strlen("Hello Server!"), 0);
 			//send(ConnectSocket, "\xff", strlen("\xff"), 0);
 		}
