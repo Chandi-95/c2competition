@@ -7,7 +7,9 @@ import queue
 import time
 from menu import *
 
-#TODO: Make an exit function
+#TODO: Make an exit function (when server quits, send a message to all clients to quit)
+#TODO: Store client sockets and addresses in dictionary
+#TODO: Add encryption on both sides
 
 # Host and port to listen for connections on 
 HOST = "192.168.232.1"
@@ -120,6 +122,7 @@ def handle(client_sock, client_addr, name, queue):
 
             # Receiving output from the client
             #TODO: Move closing the socket to closeconnections
+            #TODO: Create some way to differentiate between displaying command output and downloading into a file
             if(command != "close"):
                 # Recieve one byte at a time, end character is 0xFF
                 #output = bytes.decode(client_sock.recv(1))
